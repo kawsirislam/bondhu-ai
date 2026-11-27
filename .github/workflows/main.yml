@@ -20,15 +20,17 @@ jobs:
           ls
           ZIP=$(ls *.zip | head -n 1)
           if [ -n "$ZIP" ]; then unzip -o "$ZIP"; fi
-          ls
           FILE=$(find . -name "BondhuWebViewBridge.kt" | head -n 1)
           echo "Fixing file: $FILE"
-          if [ -n "$FILE" ]; then sed -i 's/onBackPressedDispatcher/(context as androidx.activity.ComponentActivity).onBackPressedDispatcher/g' "$FILE"; fi
-          echo "--- TOP 1-30 ---"
-          cat -n "$FILE" | sed -n '1,30p'
+          if [ -n "$FILE" ]; then sed -i 's/activity\.onBackPressedDispatcher/(activity as androidx.activity.ComponentActivity).onBackPressedDispatcher/g' "$FILE"; fi
           echo "--- LINE 200-220 ---"
           cat -n "$FILE" | sed -n '200,220p'
-          if [ -f gradlew ]; then chmod +x gradlew && ./gradlew assembleDebug --stacktrace; else gradle assembleDebug --stacktrace; fi
+          set -o pipefail
+          if [ -f gradlew ]; then chmod +x gradlew && ./gradlew assembleDebug --stacktrace 2>&1 | tee build.log; else gradle assembleDebug --stacktrace 2>&1 | tee build.log; fi
+          echo "========== ASOL VUL EKHANE =========="
+          grep -i "^e:" build.log || echo "No e: line found"
+          grep -i "Unresolved\|error:" build.log | head -n 20 || true
+          echo "========== SES =========="
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
