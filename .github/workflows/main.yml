@@ -13,16 +13,15 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
       - name: Build
         run: |
           ls
           ZIP=$(ls *.zip | head -n 1)
           if [ -n "$ZIP" ]; then unzip -o "$ZIP"; fi
-          DIR=$(find . -name gradlew | head -n 1 | xargs dirname)
-          echo "Gradlew in $DIR"
-          cd "$DIR"
-          chmod +x gradlew
-          ./gradlew assembleDebug --stacktrace
+          ls
+          if [ -f gradlew ]; then chmod +x gradlew && ./gradlew assembleDebug --stacktrace; else gradle assembleDebug --stacktrace; fi
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
