@@ -13,17 +13,12 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
-        with:
-          gradle-version: 8.7
-      - name: Unzip and Build
+      - name: Build
         run: |
-          unzip -o *.zip
-          cd BondhuAI-AndroidStudio
-          gradle assembleDebug --stacktrace
+          chmod +x gradlew
+          ./gradlew assembleDebug --stacktrace
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: bondhu-ai-apk
-          path: "BondhuAI-AndroidStudio/app/build/outputs/apk/debug/*.apk"
+          path: "app/build/outputs/apk/debug/app-debug.apk"
