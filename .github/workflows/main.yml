@@ -24,6 +24,10 @@ jobs:
           FILE=$(find . -name "BondhuWebViewBridge.kt" | head -n 1)
           echo "Fixing file: $FILE"
           if [ -n "$FILE" ]; then sed -i 's/onBackPressedDispatcher/(context as androidx.activity.ComponentActivity).onBackPressedDispatcher/g' "$FILE"; fi
+          echo "--- TOP 1-30 ---"
+          cat -n "$FILE" | sed -n '1,30p'
+          echo "--- LINE 200-220 ---"
+          cat -n "$FILE" | sed -n '200,220p'
           if [ -f gradlew ]; then chmod +x gradlew && ./gradlew assembleDebug --stacktrace; else gradle assembleDebug --stacktrace; fi
       - name: Upload APK
         uses: actions/upload-artifact@v4
