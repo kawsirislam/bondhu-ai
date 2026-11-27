@@ -21,6 +21,9 @@ jobs:
           ZIP=$(ls *.zip | head -n 1)
           if [ -n "$ZIP" ]; then unzip -o "$ZIP"; fi
           ls
+          FILE=$(find . -name "BondhuWebViewBridge.kt" | head -n 1)
+          echo "Fixing file: $FILE"
+          if [ -n "$FILE" ]; then sed -i 's/onBackPressedDispatcher/(context as androidx.activity.ComponentActivity).onBackPressedDispatcher/g' "$FILE"; fi
           if [ -f gradlew ]; then chmod +x gradlew && ./gradlew assembleDebug --stacktrace; else gradle assembleDebug --stacktrace; fi
       - name: Upload APK
         uses: actions/upload-artifact@v4
