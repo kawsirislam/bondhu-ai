@@ -15,7 +15,7 @@ jobs:
       - name: Unzip Project
         run: |
           unzip -o "bondhu-ai-android-studio (1).zip" -d project
-          ls -R project/android-studio-project | head -n 100
+          ls -R project/android-studio-project
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -23,16 +23,20 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Setup Gradle 8.11
+      - name: Setup Gradle 8.7
         uses: gradle/actions/setup-gradle@v3
         with:
-          gradle-version: 8.11.1
+          gradle-version: 8.7
+
+      - name: Create local.properties
+        run: |
+          echo "sdk.dir=$ANDROID_HOME" > project/android-studio-project/local.properties
+          cat project/android-studio-project/local.properties
 
       - name: Build Debug APK
         run: |
           cd project/android-studio-project
-          echo "sdk.dir=$ANDROID_HOME" > local.properties
-          gradle assembleDebug --stacktrace
+          gradle assembleDebug --stacktrace --info
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
